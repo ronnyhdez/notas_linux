@@ -1,0 +1,185 @@
+---
+title: "Sesión 4"
+author: "Ronny Hernández Mora"
+date: "7/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Shell en GNU/Linux
+
+Establece la comunicación entre el kernell y el usuario del sistema UNIX a través
+de comandos.
+
+Hay varios tipos de shell pero el más común es el **bash**
+
+## Comandos básicos del shell
+
+**Para saber cuál shell estoy usando**
+```{bash, eval = FALSE}
+echo $SHELL
+```
+
+**Obtener la versión del shell**
+```{bash, eval = FALSE}
+/bin/bash --version
+```
+
+**Todos lo archivos de configuración están en /etc/**
+```{bash, eval = FALSE}
+cat /etc/shells
+```
+
+## Creación de scripts
+
+**Crear/editar un script de shell**
+```{bash, eval = FALSE}
+sudo vim hola_mundo.sh
+```
+
+**Hola mundo de un .sh**
+```{bash, eval = FALSE}
+#! /bin/bash
+
+mensaje="Hola Mundo"
+echo $mensaje
+```
+
+**Luego le cambiamos permisos al archivo**
+
+De esta manera podremos ejecutar el archivo.
+```{bash, eval = FALSE}
+sudo chmod 755 hola_mundo.sh
+```
+
+Ahora lo podemos correr
+```{bash, eval = FALSE}
+sh hola_mundo.sh
+```
+
+**Condicionales en un script**
+
+Ejemplo de un ifelse:
+```{bash, eval = FALSE}
+#! /bin/bash
+
+echo Elija su opción
+echo 1 - Verdadero
+echo 2 - Falsa
+read OP
+if ["$OP" = "1"];
+then
+echo Su condición es Verdadero
+else
+echo Su condición es Falsa
+fi
+echo FIN
+```
+
+Ejemplo de un case_when:
+```{bash, eval = FALSE}
+#! /bin/bash
+
+echo Elija su opción
+echo 1 - Fecha
+echo 2 - Hora
+read op
+case$op
+in
+"1") date + "%A %e de %B de %G"
+;;
+"2") date + "%H:%M"
+;;
+*) echo Opción incorrecta
+;;
+esac
+```
+
+## Redireccionamiento:
+
+ - `>` Redirecciona salida a un archivo
+ - `>>` Redirecciona salida agregando a un archivo
+ - `<` Redirecciona salida a un archivo sobreescribiendolo.
+
+```{bash, eval = FALSE}
+more /etc/passwd
+```
+
+Si me quiero llevar lo de ese archivo a otro sitio
+```{bash, eval = FALSE}
+cat /etc/passwd > nuevo_archivo.txt
+```
+
+Para que agregue al archivo (sin sobreescribir)
+```{bash, eval = FALSE}
+cat /etc/passwd >> nuevo_archivo.txt
+```
+
+# Servidor FTP
+
+El **File Transfer Protocol** es un protocolo para transferencia de archivos. Se
+necesita de un **cliente** FTP y un **servidor** FTP para poder realizar la 
+transferencia.
+
+Por defecto utiliza los puertos **20** y **21**:
+ 
+ - P 20 se usa para el flujo de datos entre cliente-servidor
+ - P 21 se usa para flujo de control (enviar órdenes al servidor)
+ 
+Más usado hoy en día es **vsftpd** por motivos de seguridad y mantenimiento.
+
+**Para utilizarlo debemos de configurar el firewall**
+```{bash, eval = FALSE}
+sudo ufw status
+```
+
+**Para activar el firewall en los puertos debemos habilitar el 20 y 21**
+```{bash, eval = FALSE}
+sudo ufw allow 20
+sudo ufw allow 21
+```
+
+**Crear usuario para que se use el servidor**
+```{bash, eval = FALSE}
+adduser usuario_ftp
+```
+
+**Verificamos usuarios**
+```{bash, eval = FALSE}
+cat /etc/passwd
+```
+
+**Le cambiamos los permisos a root pero unicamente en su carpeta de trabajo**
+```{bash, eval = FALSE}
+sudo chown root:root /home/usuario_ftp/
+```
+
+**Le creamos una carpeta de trabajo**
+```{bash, eval = FALSE}
+sudo mkdir /home/usuario_ftp/ftp_archivos
+```
+
+**Configurar que solo el sea dueño de esa carpeta con los permisos**
+```{bash, eval = FALSE}
+sudo chown usuario_ftp:usuario_ftp /home/usuario_ftp/ftp_archivos
+```
+
+**Crear un shell específico para el usuario usuario_ftp. Creamos primero el shell**
+```{bash, eval = FALSE}
+sudo vim /bin/ftponly
+```
+
+**Luego cambiamos permisos**
+```{bash, eval = FALSE}
+chmod a+x /bin/ftponly
+```
+
+**Le asignamos el shell al usuario**
+```{bash, eval = FALSE}
+sudo usermod usuario_ftp -s /bin/ftponly
+```
+
+**Revisar estos pasos en el video**

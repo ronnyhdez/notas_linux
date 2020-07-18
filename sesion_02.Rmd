@@ -1,0 +1,428 @@
+---
+title: "Sesión 2"
+author: "Ronny Hernández Mora"
+date: "7/4/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Expresiones regulares
+
+ - `^` Inicio de linea
+ - `$` Fin de linea
+ - `[a-z]` Todas las letras minúsculas
+ - `[A-Z]` Todas las letras mayúsculas
+ - `[0-9]` Todos los números
+
+Para buscar opciones de expresiones regulares [aquí hay una guía](http://www.rexv.org/)
+
+# Búsqueda de archivos y directorios
+
+**Tipos:**
+
+ - f archivo normal
+ - d directorio
+ - l enlace simbolico
+ - c caracteres
+ 
+**Nombres:**
+
+ - name nombre
+ - iname nombre sin distinción de mayúsculas/minúsculas
+ 
+**Fecha:**
+
+ - atime
+ - mtime
+ - ctime
+
+**Tamaño:**
+
+ - c bytes
+ - k kilobytes
+ - g gigabytes
+ - b 512 bytes
+ 
+
+## Por nombres 
+
+**Para buscar archivos con numeros en su nombre**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez -name "[0-9]*"
+```
+
+**Para buscar archivos con letras especificas en mayusculas o minusculas**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez -iname "[ukcl]*"
+```
+
+**Buscar archivos con nombres específicos**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez -name archivo.txt
+```
+
+## Por tamaño
+
+**Buscar archivos por tamaño**.
+
+En este caso buscamos en el log para encontrar los registros del sistema que 
+pesan menos de 100k
+```{bash, eval = FALSE}
+find /var/log/ -size -100k
+```
+
+Un archivo que registra los ingresos al servidor es **/var/log/auth.log**
+```{bash, eval = FALSE}
+more /var/log/auth.log
+```
+
+**Busqueda por tipo de archivo `f` con determinado tamaño**
+```{bash, eval = FALSE}
+find /var/log/ -type f -size +9M
+```
+
+**Busque de todo tipo de objeto (archivos y carpetas) vacío** 
+```{bash, eval = FALSE}
+find /home/ronny-hernandez/ . -empty
+```
+
+## Por tiempo
+
+**Buscar archivos modificados hace 1 día**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez/ -atime 1
+```
+
+**Buscar archivos modificados hace 2 años**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez/ -mtime +2
+```
+
+**Buscar archivos modificados hace menos de 1 día**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez/ -ctime -1
+```
+
+**Buscar archivos modificados hace 1 minuto**
+```{bash, eval = FALSE}
+find /home/ronny-hernandez/ -mmin -1
+```
+
+## Por tipo
+
+Vimos algunos ejemplos arriba. Acá escribo los que no estaban.
+
+**Buscar archivos con permisos 777**
+```{bash, eval = FALSE}
+find /var/www/ -perm 777
+```
+
+## Buscar con grep
+
+Esto nos permite buscar dentro de un archivo.
+
+ - i ignora mayusculas/minusculas
+ - n texto con número de linea
+ - c lineas que repiten la palabra
+ - l lista de archivos con coincidencias (sin texto)
+ - r Busca recursivamente
+ 
+**Buscar sin importar mayusculas/minusculas** 
+```{bash, eval = FALSE}
+grep -i usuario1 /etc/passwd
+```
+
+**Para buscar en dos archivos**:
+```{bash, eval = FALSE}
+grep "usuario1" /etc/passwd/ /etc/shadow
+```
+
+**Buscar dos palabras en el mismo archivo**
+```{bash, eval = FALSE}
+grep -e "usuario1" -e "root" /etc/passwd
+```
+
+# Procesos
+
+ - Todo proceso en Linux tiene un ID: **PID** (Process ID)
+ - Hay procesos padres con ID **PPID** (Parent Process ID)
+ - Procesos de grupo: **PGID** (Process group ID)
+ - Primer proceso que se inicia en Linux es **Init process** y tiene el PID=1
+
+Hay estados:
+
+ - Ejecución: está siendo ejecutado
+ - Durmiendo: esperando solicitud
+ - Detenido: Está suspendido
+ - Zombie: Un proceso hijo quedó sin proceso padre
+ 
+**Herramienta para visualizar procesos padres e hijos**
+```{bash, eval = FALSE}
+sudo apt install psmisc
+```
+
+**Ver árbol de procesos padres activos**
+```{bash. eval = FALSE}
+pstree
+```
+
+**Ver árbol de procesos padres e hijos**
+```{bash, eval = TRUE}
+pstree -p
+```
+
+**Ver todos los procesos que tiene el sistema**
+
+Nos mostrará todos en todas las categorías de procesos
+```{bash, eval = TRUE}
+ps -ef
+```
+
+**Para obtener información más completa**
+```{bash, eval = TRUE}
+ps -u
+```
+
+**¿Qué significan las variables del output?**
+
+ - USER: nos indica bajo el usuario que está corriendo (dueño del proces)
+ - PID: La identificación del proceso
+ - %CPU: Procentaje de recurso que está consumiendo el proceso en el proceso
+ - %MEM: Porcentaje de recurso que está consumiendo en memoria física el proceso
+ - VSZ: La memoria virtual que está consumiendo el proceso
+ - RSS: La memoria lógica consumida pero no swap
+ - TTY: La terminal con la que se encuentra trabajando el proceso. Si es un 
+ servicio veremos una `S`, si es un servicio daemon aparecerá un `?`
+ - STAT: Si el proceso de encuentra durmiendo, corriendo. 
+ - START: Hora que inició el proceso
+ - TIME: El tiempo en el que se encuentra ese proceso
+ - COMMAND: Los comandos relacionados al proceso
+
+**Para seleccionar algunas variables de las anteriores**
+```{bash, eval = FALSE}
+ps -o pid,cmd
+```
+
+**Abrir proceso en segundo plano**
+
+Vamos a hacer un ping a google, corriendo en segundo plano y vamos a enviar el
+output a /dev/null. Símbolo  `&` es el que indica que proceso corra en segundo
+plano.
+```{bash, eval = FALSE}
+ping 8.8.8.8 > /dev/null &
+```
+
+Para ver cómo va el proceso en segundo plano
+```{bash, eval = FALSE}
+jobs
+```
+
+Otro ejemplo con virtual box
+```{bash, eval = FALSE}
+sudo virtualbox &
+
+# Luego puedo hacer la conexión ssh a la máquina que tenemos ahí.
+```
+
+Para detener el proceso:
+
+```{bash, eval = FALSE}
+fg
+
+# Luego damos opción ctrl + Z para detenerlo
+# Si damos jobs de nuevo veremos que está detenido
+```
+
+Si tenemos más de un proceso y corremos los comandos anteriores estaríamos
+deteniendo todos. Para detener uno en específico colocamos `fg pid`
+
+**Para matar un proceso** 
+```{bash, eval = FALSE}
+kill -9 pid
+```
+
+**Prioridad de procesos con nice y renice**
+
+ - Procesos tienen prioridad en el sistema.
+ - Va desde -20 (prioridad alta) a +19 (prioridad baja)
+
+Revisamos variable NI que nos muestra la prioridad que tiene el proceso
+```{bash, eval = FALSE}
+ps -l
+```
+
+**Para cambiar la prioridad**
+```{bash}
+renice -5 -p 922
+```
+
+# Particionado LVM
+
+**Para iniciar con el particionado LVM necesitamos tener instalado el paquete lvm**
+```{bash, eval = FALSE}
+sudo apt install lvm2
+```
+
+**Para revisar los discos que tenemos en el sistema**:
+```{bash, eval = FALSE}
+fdisk -l
+```
+
+Nos tendrá que dar un output similar al siguiente
+```{bash, eval = FALSE}
+Disk /dev/sda: 8 GiB, 8589934592 bytes, 16777216 sectors
+Disk model: VBOX HARDDISK   
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xa67a54d4
+
+Device     Boot   Start      End Sectors Size Id Type
+/dev/sda1  *       2048  8388607 8386560   4G 83 Linux
+/dev/sda2       8390654 16775167 8384514   4G  5 Extended
+/dev/sda5       8390656 16775167 8384512   4G 82 Linux swap / Solaris
+
+
+Disk /dev/sdb: 8 GiB, 8589934592 bytes, 16777216 sectors
+Disk model: VBOX HARDDISK   
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+```
+
+El disco sobre el cual queremos hacer el particionado es el **sdb**, por ende
+nos vamos a revisar este disco:
+
+```{bash, eval = FALSE}
+sudo fdisk /dev/sdb
+```
+
+Al realizar esta acción se nos mostrará el programa fdisk y las opciones para
+realizar el particionado o las acciones relacionadas que nos interesan. Veremos
+un ouput similar al siguiente:
+
+```{bash, eval = FALSE}
+Welcome to fdisk (util-linux 2.33.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0xcb8f11bb.
+
+Command (m for help):
+```
+
+Si damos la opción m, se nos desplegarán las opciones que tenemos para usar
+el programa de particionado `fdisk`
+
+```{bash, eval = FALSE}
+Command (m for help): m
+
+Help:
+
+  DOS (MBR)
+   a   toggle a bootable flag
+   b   edit nested BSD disklabel
+   c   toggle the dos compatibility flag
+
+  Generic
+   d   delete a partition
+   F   list free unpartitioned space
+   l   list known partition types
+   n   add a new partition
+   p   print the partition table
+   t   change a partition type
+   v   verify the partition table
+   i   print information about a partition
+
+  Misc
+   m   print this menu
+   u   change display/entry units
+   x   extra functionality (experts only)
+
+  Script
+   I   load disk layout from sfdisk script file
+   O   dump disk layout to sfdisk script file
+
+  Save & Exit
+   w   write table to disk and exit
+   q   quit without saving changes
+
+  Create a new label
+   g   create a new empty GPT partition table
+   G   create a new empty SGI (IRIX) partition table
+   o   create a new empty DOS partition table
+   s   create a new empty Sun partition table
+```
+
+Si en lugar de dar la opción `m` damos la opción `n`, iniciaremos el proceso
+de partición. Nos dará a elegir si queremos una partición primaria o una
+extensión. Elegimos la opción primaria con `p`. Luego nos dará a elegir un
+número de partición entre 1 y 4. En este caso elegimos `1`
+
+Recordemos que un disco sólo puede tener **4 particiones primarias**
+```{bash, eval = FALSE}
+Command (m for help): n
+Partition type
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended (container for logical partitions)
+Select (default p): p
+Partition number (1-4, default 1): 1
+First sector (2048-16777215, default 2048): 
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-16777215, default 16777215): +4G
+```
+
+Luego de dar la opción `p` nos habilitará el espacio para decidir el
+espacio donde colocaremos la partición. Lo dejamos por defecto dejándolo
+vacío y dando `enter`
+
+Luego nos pide de cuánto espacio queremos hacer la partición. Debemos
+de tomar en cuenta el tamaño del disco. En este ejemplo nuestra máquina
+es de 8G y vamos a generar una partición de 4G a lo que ponemos como
+`+4G`
+
+Con esto ya creamos la primera partición. Si damos la opción `p` nos
+mostrará las particiones que tenemos creadas:
+```{bash}
+Command (m for help): p
+Disk /dev/sdb: 8 GiB, 8589934592 bytes, 16777216 sectors
+Disk model: VBOX HARDDISK   
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xfb6d58d7
+
+Device     Boot Start      End  Sectors Size Id Type
+/dev/sdb1        2048 16777215 16775168   8G 83 Linux
+
+Filesystem/RAID signature on partition 1 will be wiped.
+
+Command (m for help):
+```
+
+**Volúmenes lógicos trabajan con el tipo 8e**
+
+Para borrar particiones usamos la opción `d` y eso nos abrirá las 
+opciones de particiones a borrar. 
+
+Para cambiar el tipo de particiones usamos `t`. ELjimos la partición y
+en este caso para ver los tipos que existen damos `L`. Para volúmenes
+lógicos necesitamos *8e*
+
+Necesitamos ver en la partición que es de tipo **Linux LVM**
+
+Una vez que hemos realizado estos pasos necesitamos que guarde los
+cambios a lo que ingresamos `w`
+
+Para que los cambios tengan efecto hay que reiniciar el servidor. Para no
+reiniciarlo, podemos usar el comando `sudo partprobe -s`
+
+Para tener la funcionalidad hay que tener instalado el paquete
+`sudo apt install parted`
+
+14:11

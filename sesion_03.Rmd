@@ -1,0 +1,413 @@
+---
+title: "Sesión 3"
+author: "Ronny Hernández Mora"
+date: "7/4/2020"
+output:
+  html_document:
+    code_folding: show
+    self_contained: true
+    number_sections: no
+    theme: spacelab
+    toc: yes
+    toc_float:
+      collapsed: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Administración de paquetes
+
+```{bash}
+vim /etc/apt/sources.list
+```
+
+
+## Usuarios
+
+Usuarios se registran en el archivo:
+```{bash, eval = FALSE}
+cat /etc/passwd
+```
+
+Contraseña para usuario específico ni como root la podemos
+ver. Están encriptadas. Lo más que podemos hacer es cambiarla
+
+Si revisamos el archivo `/etc/passwd` vamos a obtener una lista
+muy grande. Las cuentas que uno como usuario puede crear para
+otros usuarios inician a partir de 1001. Las anteriores son 
+cuentas del sistema y uno notará que tienen un **nologin**
+
+Si a un usuario hay que cambiarle la contraseña lo hacemos con
+```{bash, eval = FALSE}
+sudo passwd usuario1
+```
+
+Las contraseñas se pueden ingresar como root en el archivo
+siguiente
+```{bash, eval = FALSE}
+cat /etc/shadow
+```
+
+Para revisar usuario en especifico
+```{bash, eval = FALSE}
+sudo chage -l usuario1
+```
+
+Para que cuenta expire:
+
+```{bash, eval = FALSE}
+sudo chage -E 2020-7-12 usuario1
+```
+
+Consulto la cuenta que le pusimos caducidad
+
+```{bash, eval = FALSE}
+sudo chage -l usuario1
+```
+
+Para que usuario obtenga mensaje a los 5 días de que debe
+de cambiar la contraseña. El límite es que luego va a tener
+5 días más Máximo para cambiar la contraseña. El **-I** es
+para inactivar la cuenta después de 5 días más. Por último
+ponemos al usuario.
+
+```{bash, eval = FALSE}
+sudo chage -m 5 -M 5 -I 5 usuario1
+```
+
+Para bloquear una cuenta en 4 días del usuario1
+```{bash, eval = FALSE}
+sudo chage -I 4 usuario1
+```
+
+Para bloquear una cuenta ya:
+```{bash, eval = FALSE}
+sudo usermod -L usuario1
+```
+
+Para reactivar la cuenta:
+```{bash, eval = FALSE}
+sudo usermod -U usuario1
+```
+
+Fecha de expiración para credenciales
+```{bash}
+sudo chage -l 5 icai
+```
+
+### Gestión de grupos
+
+Colecciones de usuarios
+
+ - Todos los archivos de configuración están en etc. 
+ - Para grupos se les puede colocar contraseñas sin embargo no
+ es usual.
+ - Grupos están definidos en /etc/group
+ - Cuando se crea un usuario se crea un grupo para el usuario
+ 
+Ver los grupos
+```{r}
+cat /etc/group
+```
+
+Creaci'on de un grupo
+
+```{bash}
+sudo groupadd administrativo
+```
+
+Revisar los grupos
+```{bash}
+cat /etc/group
+```
+
+SI tenemos que hacerle cambio de nombre al grupo
+```{bash}
+sudo groupmod -n finanzas administrativo
+```
+
+Para eliminar el grupo
+```{bash}
+sudo groupdel finanzas
+```
+
+Un usuario puede estar en varios grupos. Para revisar en qué
+grupos está el usuario `usuario1`
+
+```{bash}
+sudo groups usuario1
+```
+
+Para agregar un usuario a un grupo: 
+```{bash}
+sudo usermod -G administrativo usuario1
+```
+
+Para revisar únicamente los nombres de los grupos:
+```{bash}
+sudo cut -d : -f /etc/group
+```
+
+### Permisos a archivos
+
+Creamos archivo:
+```{bash}
+touch prueba
+```
+
+Para revisar los permisos
+```{bash}
+ls -l
+```
+
+Cambiar los permisos a completo para todos los usuarios
+```{bash}
+chom 777 prueba
+```
+
+**Regla general archivos 444, y directorios 755**
+
+Con directorios, primero creamos un directorio de prueba
+```{bash}
+mkdir directorio1
+```
+
+Le cambiamos los permisos recomendados
+```{bash}
+chmod -R 755 directorio1/
+```
+
+Revisamos cómo quedaron los permisos del directorio
+```{bash}
+ls -l
+```
+
+Permisos sólo para el propietario
+```{bash}
+chmod 700 prueba
+```
+
+### Permisos grupos de usuarios
+
+Vamos a continuar con ejemplo en archivo de prueba.
+```{bash}
+ls -l
+```
+
+Recordemos que siempre vemos primero el usuario y 
+luego el grupo. Vamos a cambiar el grupo
+```{bash}
+sudo chgrp usuario1 archivo.txt
+ls -l
+```
+
+Ahora vemos que el usuario original (que creó el archivo)
+tiene acceso pero también el grupo del archivo.
+
+Podemos cambiar de usuario y grupo un directorio/archivo
+```{bash}
+sudo chown -R usuario1:usuario1 directorio1
+```
+
+## Permisos y notación simbólica
+
+Agregarle permisos al usuario
+```{bash}
+sudo chmod u+rwx archivo.txt
+ls -l
+```
+
+Darle permisos de ejecución al grupo
+```{bash}
+sudo chmod g+x prueba
+```
+
+## Seguridad del sistema operativo
+
+Siempre mantener el sistema actualizado.
+
+Revisar versión del sistema
+```{bash}
+lsb_release -a
+```
+
+Revisar versión del kernell
+```{bash}
+uname -mrs
+```
+
+
+Para contraseñas seguras: `pwgen`. Nos genera
+contraseñas seguras para usar en servidores
+
+```{bash}
+sudo apt install pwgen
+```
+
+Podemos incluir diferentes parámetros para la generación
+de las contraseñas.
+
+Incluya al menos una letra mayúscula
+```{bash}
+pwgen -c
+```
+
+Para incluir al menos un número
+```{bash}
+pwgen -n
+```
+
+Generar 1 contraseña con 15 caracteres con al menos un
+simbolo y sin vocales:
+```{bash}
+zpwgen 15 1 -y -v
+```
+
+Para probar contraseñas lo podemos hacer con la
+librería libcrack2
+
+```{bash}
+sudo apt install libcrack2
+```
+
+Para probar la contraseña que generamos
+```{bash}
+sudo echo "),m.@QZ2MDWl" | cracklib-check
+```
+
+Para servicios que bloqueen IP que intentan crackear
+contraseñas
+
+```{bash}
+sudo apt install fail2ban
+```
+
+Para iniciar el servicio
+```{bash}
+systemctl start fail2ban
+```
+
+Para que servicio quede activo a pesar de reinicio
+```{bash}
+systemctl enable fail2ban
+```
+
+COnfigurar el servicio
+```{bash}
+cd /etc/fail2ban
+```
+
+Hacemos un resguardo del archivo original de 
+configuración
+```{bash}
+cp jail.conf jail.local
+```
+
+Hacemos cambios en el archivo jail.local
+Sacamos el parámetro **bantime** de comentario y lo 
+en dos horas pero en segundos
+```{bash}
+# [DEFAULT]
+bantime = 7200
+```
+
+
+Para revisar en el servidor las IP que han hecho 
+conexión y las que están bloqueadas:
+```{bash}
+iptables -L
+iptables -L -n
+```
+
+Para eliminar bloqueo y que se pueda dar el acceso.
+Primero buscamos la lista que está bloqueada
+```{bash}
+fail2ban-client status
+```
+
+Para quitar el IP especifico de la lista:
+```{bash}
+fail2ban-client set sshd unbanip <IP>
+```
+
+## Configurar SSH
+
+ANtes de hacer configuraciones a archivos de configuracion 
+debemos de una copia del archivo de configuración
+
+```{bash}
+cp /etc/sshd/sshd_config /etc/sshd/sshd_config_copia
+```
+
+Buenas practicas es que siempre cambiemos los puertos de conexion. Por ejemplo, 
+ssh en su archivo de configuración viene el puerto 22. Lo debemos de cambiar
+a por ejemplo 2225 (un puerto mayor a mil)
+
+Si un administrador se fue, viene uno nuevo y necesita saber el cambio podemos
+hacerlo con:
+
+```{bash}
+more /etc/ssh/sshd_config
+```
+
+Luego de cambios para reiniciar el servicio de tal manera que las aplicaciones
+que se están sirviendo no se caigan:
+```{bash}
+service ssh reload
+```
+
+
+Cuando ya hemos hecho un cambio en el puerto, ahora que nos queremos comunicar
+debemos de indicar en la conexión cuál es el puerto
+
+```{bash}
+ssh -l icai 192.168.0.17 -p 2225
+```
+
+Ahora configuramos otro parámetro como el protocolo. Versiones más recientes de
+debian vienen con el 2 que es el más seguro
+
+EL siguiente protocolo a configurar es el LoginGraceTime. Es el tiempo que deja
+disponible para que uno escriba la contraseña y accese el servidor. Si uno
+lo deja en 2 minutos lo cierra y hay que volver a ingresar la contraseña.
+
+```{bash}
+# Authentication:
+LoginGraceTime 2m
+```
+
+Otra es que nadie se conecte con el usuario root:
+
+```{bash}
+
+```
+
+Tambien a los cuantos intentos de que alguien trate de conectarse, se le bloquee
+el acceso:
+
+```{bash}
+MaxAuthTries 3
+```
+
+Usuarios que se deniegan la conexión al servidor
+```{bash}
+DenyUsers root icai
+```
+
+Si queremos asegurar excluir la conexión desde otras redes, usamos otro archivo
+y cambiamos el parametro
+
+**me perdí, ver el video**
+
+```{bash}
+
+```
+
+
+Certificados de seguridad:
+
+Los veremos luego en el segmento de páginas web
