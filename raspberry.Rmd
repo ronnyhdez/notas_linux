@@ -1,0 +1,43 @@
+---
+title: "Raspberry"
+author: "Ronny Hernández Mora"
+date: "7/4/2020"
+output: 
+  html_document:
+    number_sections: yes 
+    toc: yes
+    toc_float:
+      collapsed: yes
+    code_folding: show
+    theme: yeti
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Conexión por SSH al raspberry
+
+Primero en el raspberry tenemos que habilitar la conexión por ssh
+
+Luego, en nuestra terminal corremos el comando: 
+
+```{bash, eval = FALSE}
+ssh pi@raspberrypi.local
+```
+
+Luego de esto nos pedira que si queremos hacer la conexión y seguidamente, al
+aceptar nos pedirá la contraseña para el usuario del raspberry. La colocamos
+y ahora tendremos acceso al raspberry.
+
+## Instalación shiny server
+
+```{bash, eval = FALSE}
+
+```
+
+## Referencias
+
+[blog](https://andresrcs.rbind.io/es/2018/11/21/shiny_rstudio_server/)
+[webinario](https://www.youtube.com/watch?v=BNTlEVYrT0I&list=PLZpKvQTlfyCI9b-Fr5Gmojf8uhuAXroG_&index=12)
+
