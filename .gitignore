@@ -41,3 +41,5 @@ vignettes/*.pdf
 # Render documents
 *.html
 *.pdf
+*.png
+practicas/

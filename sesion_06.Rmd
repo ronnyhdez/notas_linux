@@ -1,0 +1,79 @@
+---
+title: "Sesión 5"
+author: "Ronny Hernández Mora"
+date: "7/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Continuación de servidores mail.
+
+
+Protocolo SMTP: usado para intercambio de msjs de correo
+POP3: Para que un cliente con uso de software (outlook, thunderbird) almacene
+los correos en su equipo, unicamente los descarga.
+IMAP: Solo para ver correos de manera remota.
+
+Primera directiva al configurar es el host, el cual sería el nombre del equipo:
+
+myorigin va a ser el dominio que envía los correos, lo que está a la derecha del
+ronny@xxxx
+
+Mejores practicas: cada servidor tiene una funcion. Uno el del web, otro el del
+correo y así
+```
+myhostname = cursolinux.com
+myorigin= cursolinux.com
+
+```
+
+Luego en /etc/apache2/sites-available/
+
+Nos traemos el archivo que acabamos de configurar en squirrelmail y lo 
+copiamos como mail.conf
+
+```
+cp /etc/squirrelmail/apache.conf mail.conf
+```
+
+
+Lo modificamos
+
+Le damos un grupo mail a dovecot que es el protocolo. mail es un grupo que ya
+existe en linux.
+
+```
+sudo usermod -G mail -a dovecot
+```
+
+Ya agregado el usuario, reiniciamos servicio
+
+
+... Revisar video. Hay un error ya que el servicio spamassassin es spamassassin.service
+
+
+# Servicio DNS
+
+Traduce IP a nombres.
+
+Instalar bind9
+
+Luego en `etc/bind/`
+
+Tenemos varios archivos como el named.conf.local
+
+Para que el DNS responda y dé un IP hay que configurarle la zona. Se hace en el
+archivo anteior.
+
+EL otro archivo es db.local. Este tenemos que renombrarlo y ponerle el nombre
+de nuestro dominio. Si tenemos ronny.com lo vamos a copiar acá y le vamos a
+poner db.ronny.com
+
+Para que DNS resuelva la IP hay que configurar el db.127 Hay que renombrarlo
+con la IP del servidor y se le pone los ultimos octetos. 
+
+
+

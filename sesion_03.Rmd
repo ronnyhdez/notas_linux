@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Administración de paquetes
 
-```{bash}
+```
 vim /etc/apt/sources.list
 ```
 
@@ -95,7 +95,7 @@ sudo usermod -U usuario1
 ```
 
 Fecha de expiración para credenciales
-```{bash}
+```
 sudo chage -l 5 icai
 ```
 
@@ -110,97 +110,97 @@ Colecciones de usuarios
  - Cuando se crea un usuario se crea un grupo para el usuario
  
 Ver los grupos
-```{r}
+```
 cat /etc/group
 ```
 
 Creaci'on de un grupo
 
-```{bash}
+```
 sudo groupadd administrativo
 ```
 
 Revisar los grupos
-```{bash}
+```
 cat /etc/group
 ```
 
 SI tenemos que hacerle cambio de nombre al grupo
-```{bash}
+```
 sudo groupmod -n finanzas administrativo
 ```
 
 Para eliminar el grupo
-```{bash}
+```
 sudo groupdel finanzas
 ```
 
 Un usuario puede estar en varios grupos. Para revisar en qué
 grupos está el usuario `usuario1`
 
-```{bash}
+```
 sudo groups usuario1
 ```
 
 Para agregar un usuario a un grupo: 
-```{bash}
+```
 sudo usermod -G administrativo usuario1
 ```
 
 Para revisar únicamente los nombres de los grupos:
-```{bash}
+```
 sudo cut -d : -f /etc/group
 ```
 
 ### Permisos a archivos
 
 Creamos archivo:
-```{bash}
+```
 touch prueba
 ```
 
 Para revisar los permisos
-```{bash}
+```
 ls -l
 ```
 
 Cambiar los permisos a completo para todos los usuarios
-```{bash}
+```
 chom 777 prueba
 ```
 
 **Regla general archivos 444, y directorios 755**
 
 Con directorios, primero creamos un directorio de prueba
-```{bash}
+```
 mkdir directorio1
 ```
 
 Le cambiamos los permisos recomendados
-```{bash}
+```
 chmod -R 755 directorio1/
 ```
 
 Revisamos cómo quedaron los permisos del directorio
-```{bash}
+```
 ls -l
 ```
 
 Permisos sólo para el propietario
-```{bash}
+```
 chmod 700 prueba
 ```
 
 ### Permisos grupos de usuarios
 
 Vamos a continuar con ejemplo en archivo de prueba.
-```{bash}
+```
 ls -l
 ```
 
 Recordemos que siempre vemos primero el usuario y 
 luego el grupo. Vamos a cambiar el grupo
-```{bash}
+```
 sudo chgrp usuario1 archivo.txt
 ls -l
 ```
@@ -209,20 +209,20 @@ Ahora vemos que el usuario original (que creó el archivo)
 tiene acceso pero también el grupo del archivo.
 
 Podemos cambiar de usuario y grupo un directorio/archivo
-```{bash}
+```
 sudo chown -R usuario1:usuario1 directorio1
 ```
 
 ## Permisos y notación simbólica
 
 Agregarle permisos al usuario
-```{bash}
+```
 sudo chmod u+rwx archivo.txt
 ls -l
 ```
 
 Darle permisos de ejecución al grupo
-```{bash}
+```
 sudo chmod g+x prueba
 ```
 
@@ -231,12 +231,12 @@ sudo chmod g+x prueba
 Siempre mantener el sistema actualizado.
 
 Revisar versión del sistema
-```{bash}
+```
 lsb_release -a
 ```
 
 Revisar versión del kernell
-```{bash}
+```
 uname -mrs
 ```
 
@@ -244,7 +244,7 @@ uname -mrs
 Para contraseñas seguras: `pwgen`. Nos genera
 contraseñas seguras para usar en servidores
 
-```{bash}
+```
 sudo apt install pwgen
 ```
 
@@ -252,85 +252,84 @@ Podemos incluir diferentes parámetros para la generación
 de las contraseñas.
 
 Incluya al menos una letra mayúscula
-```{bash}
+```
 pwgen -c
 ```
 
 Para incluir al menos un número
-```{bash}
+```
 pwgen -n
 ```
 
 Generar 1 contraseña con 15 caracteres con al menos un
 simbolo y sin vocales:
-```{bash}
+```
 zpwgen 15 1 -y -v
 ```
 
 Para probar contraseñas lo podemos hacer con la
 librería libcrack2
 
-```{bash}
+```
 sudo apt install libcrack2
 ```
 
 Para probar la contraseña que generamos
-```{bash}
+```
 sudo echo "),m.@QZ2MDWl" | cracklib-check
 ```
 
 Para servicios que bloqueen IP que intentan crackear
 contraseñas
 
-```{bash}
+```
 sudo apt install fail2ban
 ```
 
 Para iniciar el servicio
-```{bash}
+```
 systemctl start fail2ban
 ```
 
 Para que servicio quede activo a pesar de reinicio
-```{bash}
+```
 systemctl enable fail2ban
 ```
 
-COnfigurar el servicio
-```{bash}
+Configurar el servicio
+```
 cd /etc/fail2ban
 ```
 
 Hacemos un resguardo del archivo original de 
 configuración
-```{bash}
+```
 cp jail.conf jail.local
 ```
 
 Hacemos cambios en el archivo jail.local
 Sacamos el parámetro **bantime** de comentario y lo 
 en dos horas pero en segundos
-```{bash}
+```
 # [DEFAULT]
 bantime = 7200
 ```
 
-
 Para revisar en el servidor las IP que han hecho 
 conexión y las que están bloqueadas:
-```{bash}
+```
 iptables -L
 iptables -L -n
 ```
 
 Para eliminar bloqueo y que se pueda dar el acceso.
 Primero buscamos la lista que está bloqueada
-```{bash}
+```
 fail2ban-client status
 ```
 
 Para quitar el IP especifico de la lista:
-```{bash}
+```
 fail2ban-client set sshd unbanip <IP>
 ```
 
@@ -339,7 +338,7 @@ fail2ban-client set sshd unbanip <IP>
 ANtes de hacer configuraciones a archivos de configuracion 
 debemos de una copia del archivo de configuración
 
-```{bash}
+```
 cp /etc/sshd/sshd_config /etc/sshd/sshd_config_copia
 ```
 
@@ -350,13 +349,13 @@ a por ejemplo 2225 (un puerto mayor a mil)
 Si un administrador se fue, viene uno nuevo y necesita saber el cambio podemos
 hacerlo con:
 
-```{bash}
+```
 more /etc/ssh/sshd_config
 ```
 
 Luego de cambios para reiniciar el servicio de tal manera que las aplicaciones
 que se están sirviendo no se caigan:
-```{bash}
+```
 service ssh reload
 ```
 
@@ -364,7 +363,7 @@ service ssh reload
 Cuando ya hemos hecho un cambio en el puerto, ahora que nos queremos comunicar
 debemos de indicar en la conexión cuál es el puerto
 
-```{bash}
+```
 ssh -l icai 192.168.0.17 -p 2225
 ```
 
@@ -375,26 +374,26 @@ EL siguiente protocolo a configurar es el LoginGraceTime. Es el tiempo que deja
 disponible para que uno escriba la contraseña y accese el servidor. Si uno
 lo deja en 2 minutos lo cierra y hay que volver a ingresar la contraseña.
 
-```{bash}
+```
 # Authentication:
 LoginGraceTime 2m
 ```
 
 Otra es que nadie se conecte con el usuario root:
 
-```{bash}
+```
 
 ```
 
 Tambien a los cuantos intentos de que alguien trate de conectarse, se le bloquee
 el acceso:
 
-```{bash}
+```
 MaxAuthTries 3
 ```
 
 Usuarios que se deniegan la conexión al servidor
-```{bash}
+```
 DenyUsers root icai
 ```
 
@@ -403,7 +402,7 @@ y cambiamos el parametro
 
 **me perdí, ver el video**
 
-```{bash}
+```
 
 ```
 
