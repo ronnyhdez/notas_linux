@@ -11,8 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Shell en GNU/Linux
 
-Establece la comunicación entre el kernell y el usuario del sistema UNIX a través
-de comandos.
+Establece la comunicación entre el kernell y el usuario del sistema UNIX a
+través de comandos.
+
+s04_3:54:30
 
 Hay varios tipos de shell pero el más común es el **bash**
 

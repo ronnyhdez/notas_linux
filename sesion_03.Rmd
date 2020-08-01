@@ -19,40 +19,45 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Administración de paquetes
+## Gestión de paquetes en GNU/Linux
 
-```
+Para ver los repositorios de los cuales hacemos las actualizaciones de paquetes
+del sistema, podemos revisar/modificar el archivo `sources.list`
+
+```{bash, eval = FALSE}
 vim /etc/apt/sources.list
 ```
-
 
 ## Usuarios
 
 Usuarios se registran en el archivo:
+
 ```{bash, eval = FALSE}
 cat /etc/passwd
 ```
 
-Contraseña para usuario específico ni como root la podemos
-ver. Están encriptadas. Lo más que podemos hacer es cambiarla
+Contraseña para usuario específico **ni como root la podemos ver**. Están
+encriptadas. Lo más que podemos hacer es cambiarla por una nueva.
 
 Si revisamos el archivo `/etc/passwd` vamos a obtener una lista
 muy grande. Las cuentas que uno como usuario puede crear para
 otros usuarios inician a partir de 1001. Las anteriores son 
 cuentas del sistema y uno notará que tienen un **nologin**
 
-Si a un usuario hay que cambiarle la contraseña lo hacemos con
+Si a un usuario hay que cambiarle la contraseña lo hacemos con:
+
 ```{bash, eval = FALSE}
 sudo passwd usuario1
 ```
 
-Las contraseñas se pueden ingresar como root en el archivo
-siguiente
+Las contraseñas se pueden ingresar como root en el archivo siguiente
+
 ```{bash, eval = FALSE}
 cat /etc/shadow
 ```
 
-Para revisar usuario en especifico
+Para revisar usuario en específico
+
 ```{bash, eval = FALSE}
 sudo chage -l usuario1
 ```
@@ -95,7 +100,7 @@ sudo usermod -U usuario1
 ```
 
 Fecha de expiración para credenciales
-```
+```{bash, eval = FALSE}
 sudo chage -l 5 icai
 ```
 
@@ -103,69 +108,73 @@ sudo chage -l 5 icai
 
 Colecciones de usuarios
 
- - Todos los archivos de configuración están en etc. 
- - Para grupos se les puede colocar contraseñas sin embargo no
- es usual.
- - Grupos están definidos en /etc/group
- - Cuando se crea un usuario se crea un grupo para el usuario
+ - Todos los archivos de configuración están en `/etc/`. 
+ - Para grupos se les puede colocar contraseñas sin embargo no es usual.
+ - Grupos están definidos en `/etc/group`
+ - Cuando se crea un usuario se crea un grupo para el usuario con el mismo nombre
  
 Ver los grupos
-```
+```{bash, eval = FALSE}
 cat /etc/group
 ```
 
-Creaci'on de un grupo
+Creación de un grupo
 
-```
+```{bash, eval = FALSE}
 sudo groupadd administrativo
 ```
 
 Revisar los grupos
-```
+
+```{bash, eval = FALSE}
 cat /etc/group
 ```
 
-SI tenemos que hacerle cambio de nombre al grupo
-```
+Si tenemos que hacerle cambio de nombre al grupo
+
+```{bash, eval = FALSE}
 sudo groupmod -n finanzas administrativo
 ```
 
 Para eliminar el grupo
-```
+
+```{bash, eval = FALSE}
 sudo groupdel finanzas
 ```
 
 Un usuario puede estar en varios grupos. Para revisar en qué
 grupos está el usuario `usuario1`
 
-```
+```{bash, eval = FALSE}
 sudo groups usuario1
 ```
 
 Para agregar un usuario a un grupo: 
-```
+
+```{bash, eval = FALSE}
 sudo usermod -G administrativo usuario1
 ```
 
 Para revisar únicamente los nombres de los grupos:
-```
+
+```{bash, eval = FALSE}
 sudo cut -d : -f /etc/group
 ```
 
 ### Permisos a archivos
 
 Creamos archivo:
-```
+```{bash, eval = FALSE}
 touch prueba
 ```
 
 Para revisar los permisos
-```
+```{bash, eval = FALSE}
 ls -l
 ```
 
 Cambiar los permisos a completo para todos los usuarios
-```
+```{bash, eval = FALSE}
 chom 777 prueba
 ```
 
@@ -231,20 +240,19 @@ sudo chmod g+x prueba
 Siempre mantener el sistema actualizado.
 
 Revisar versión del sistema
-```
+```{bash, eval = FALSE}
 lsb_release -a
 ```
 
 Revisar versión del kernell
-```
+```{bash, eval = FALSE}
 uname -mrs
 ```
-
 
 Para contraseñas seguras: `pwgen`. Nos genera
 contraseñas seguras para usar en servidores
 
-```
+```{bash, eval = FALSE}
 sudo apt install pwgen
 ```
 
@@ -252,161 +260,212 @@ Podemos incluir diferentes parámetros para la generación
 de las contraseñas.
 
 Incluya al menos una letra mayúscula
-```
+
+```{bash, eval = FALSE}
 pwgen -c
 ```
 
 Para incluir al menos un número
-```
+
+```{bash, eval = FALSE}
 pwgen -n
 ```
 
 Generar 1 contraseña con 15 caracteres con al menos un
 simbolo y sin vocales:
-```
+
+```{bash, eval = FALSE}
 zpwgen 15 1 -y -v
 ```
 
 Para probar contraseñas lo podemos hacer con la
 librería libcrack2
 
-```
+```{bash, eval = FALSE}
 sudo apt install libcrack2
 ```
 
 Para probar la contraseña que generamos
-```
+```{bash, eval = FALSE}
 sudo echo "),m.@QZ2MDWl" | cracklib-check
 ```
 
 Para servicios que bloqueen IP que intentan crackear
 contraseñas
 
-```
+```{bash, eval = FALSE}
 sudo apt install fail2ban
 ```
 
 Para iniciar el servicio
-```
+```{bash, eval = FALSE}
 systemctl start fail2ban
 ```
 
 Para que servicio quede activo a pesar de reinicio
-```
+```{bash, eval = FALSE}
 systemctl enable fail2ban
 ```
 
 Configurar el servicio
-```
+```{bash, eval = FALSE}
 cd /etc/fail2ban
 ```
 
 Hacemos un resguardo del archivo original de 
 configuración
-```
+```{bash, eval = FALSE}
 cp jail.conf jail.local
 ```
 
 Hacemos cambios en el archivo jail.local
 Sacamos el parámetro **bantime** de comentario y lo 
 en dos horas pero en segundos
-```
+
+```{bash, eval = FALSE}
 # [DEFAULT]
 bantime = 7200
 ```
 
-Para revisar en el servidor las IP que han hecho 
-conexión y las que están bloqueadas:
-```
+Para revisar en el servidor las IP que han hecho conexión y las que están
+bloqueadas:
+
+```{bash, eval = FALSE}
 iptables -L
 iptables -L -n
 ```
 
 Para eliminar bloqueo y que se pueda dar el acceso.
 Primero buscamos la lista que está bloqueada
-```
+```{bash, eval = FALSE}
 fail2ban-client status
 ```
 
 Para quitar el IP especifico de la lista:
-```
+```{bash, eval = FALSE}
 fail2ban-client set sshd unbanip <IP>
 ```
 
 ## Configurar SSH
 
-ANtes de hacer configuraciones a archivos de configuracion 
-debemos de una copia del archivo de configuración
+Antes de hacer configuraciones a archivos de configuración debemos de **crear una** 
+**copia del archivo de configuración**. Podemos ponerle al archivo copia un `_copia` al
+nombre del archivo que estamos dejando como respaldo. Los cambios en configuración
+los realizamos en el archivo que quedó con el nombre original.
 
-```
+```{bash, eval = FALSE}
 cp /etc/sshd/sshd_config /etc/sshd/sshd_config_copia
 ```
 
-Buenas practicas es que siempre cambiemos los puertos de conexion. Por ejemplo, 
+Buenas practicas es que **siempre cambiemos los puertos de conexión**. Por ejemplo, 
 ssh en su archivo de configuración viene el puerto 22. Lo debemos de cambiar
-a por ejemplo 2225 (un puerto mayor a mil)
+a por ejemplo 2225 (**un puerto mayor a mil**)
 
-Si un administrador se fue, viene uno nuevo y necesita saber el cambio podemos
-hacerlo con:
+Si un administrador se fue, viene uno nuevo y necesita saber el cambio de puerto
+u otros cambios que se hayan realizado en el archivo de configuración para ssh, 
+debemos de revisar el archivo, lo que se puede hacer con el siguiente comando:
 
-```
+```{bash, eval = FALSE}
 more /etc/ssh/sshd_config
 ```
 
-Luego de cambios para reiniciar el servicio de tal manera que las aplicaciones
-que se están sirviendo no se caigan:
+Luego de generar cambios en el archivo de configuración, debemos de reiniciar el
+servicio. 
+
+```{bash, eval = FALSE}
+/etc/init.d/ssh restart
 ```
+
+Otra forma de reiniciar el servicio:
+```{bash, eval = FALSE}
+service ssh restart
+```
+
+Una manera de hacer este proceso de tal forma que las aplicaciones que 
+se están sirviendo no se caigan es la siguiente:
+
+```{bash, eval = FALSE}
 service ssh reload
 ```
 
+Cuando ya hemos hecho un cambio en el puerto (en este ejemplo pasamos del puerto
+por defecto 22 a 2225), ahora que nos queremos comunicar a través de ssh al
+servidor, debemos de hacerlo indicando el puerto configurado:
 
-Cuando ya hemos hecho un cambio en el puerto, ahora que nos queremos comunicar
-debemos de indicar en la conexión cuál es el puerto
-
-```
+```{bash, eval = FALSE}
 ssh -l icai 192.168.0.17 -p 2225
 ```
 
-Ahora configuramos otro parámetro como el protocolo. Versiones más recientes de
-debian vienen con el 2 que es el más seguro
+En distribuciones previas a la 10, existía un parámetro en el archivo de 
+configuración para hacer cambios en el protocolo. Sin embargo versiones más 
+recientes de debian vienen con el protocolo 2 que es el más seguro. Si este es
+nuestro caso, lo mejor es dejar este parámetro como tal.
 
-EL siguiente protocolo a configurar es el LoginGraceTime. Es el tiempo que deja
-disponible para que uno escriba la contraseña y accese el servidor. Si uno
-lo deja en 2 minutos lo cierra y hay que volver a ingresar la contraseña.
+Un siguiente parámetro a cambiar es el **tiempo que se encuentra disponible la**
+**ventana para realizar el login**. Este parámetro está como `LoginGraceTime`. Es el
+tiempo que deja disponible para que uno escriba la contraseña y accese el 
+servidor. Si uno lo deja en 2 minutos lo cierra y hay que volver a ingresar la
+contraseña.
 
-```
+Como nota, debemos recordar que si el parámetro viene con el signo `#` lo 
+borramos para dejarlo activado. Luego, en este caso indicamos los 2 minutos con
+la notación `2m`.
+
+```{bash, eval = FALSE}
 # Authentication:
 LoginGraceTime 2m
 ```
 
-Otra es que nadie se conecte con el usuario root:
+Otro parámetro importante a configurar, es que no queremos que nadie se conecte
+al servidor como usuario root. Por defecto, las distribuciones más recientes
+traen esta restricción como configuración por defecto. La podemos validar 
+revisando:
 
+s04_3:27:06
+
+```{bash, eval = FALSE}
+#PermitRootLogin prohibit-password
 ```
 
-```
+Otro aspecto importante es la cantidad de intentos que un usuario puede tener
+para conectarse al servidor. Si se equivoca x cantidad de veces podemos bloquear
+su cuenta. 
 
-Tambien a los cuantos intentos de que alguien trate de conectarse, se le bloquee
-el acceso:
-
-```
+```{bash, eval = FALSE}
 MaxAuthTries 3
 ```
 
-Usuarios que se deniegan la conexión al servidor
-```
+Así mismo, podemos definir los usuarios que les negamos la conexión al servidor.
+En este caso le denegamos el acceso a los usuarios root e icai.
+
+```{bash, eval = FALSE}
 DenyUsers root icai
 ```
 
-Si queremos asegurar excluir la conexión desde otras redes, usamos otro archivo
-y cambiamos el parametro
+**Denegar IP's de conexión a SSH: TCP Wrappers**
 
-**me perdí, ver el video**
+Si queremos excluir la conexión desde otras redes, usamos otro archivo de
+configuración llamado **host.allow**. En este cambiamos el parámetro `sshd` en
+el cual indicamos cuál es el rango de redes que quiero permitir la conexión 
+ssh.
 
+```{bash, eval = FALSE}
+sshd: 192.168.0.0/24
 ```
 
+Este es el primer paso, donde definimos las redes que permito que se conecten.
+Ahora tengo que ir al archivo **host.deny** para indicar qué redes no quiero
+que se conecten. Si lo dejamos en `ALL` solo permitiremos la red indicada en
+el archivo host.allow y nada más que eso.
+
+```{bash, eval = FALSE}
+sshd: ALL
 ```
 
+Después de realizar cambios en estos archivos de configuración de ssh, debemos de
+reiniciar el servicio.
 
-Certificados de seguridad:
+```{bash, eval = FALSE}
+sudo systemctl restart ssh
+```
 
-Los veremos luego en el segmento de páginas web
