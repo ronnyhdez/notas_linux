@@ -1,8 +1,18 @@
 ---
 title: "Sesión 5"
 author: "Ronny Hernández Mora"
-date: "7/11/2020"
-output: pdf_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: true
+    number_sections: no
+    theme: spacelab
+    toc: yes
+    toc_float:
+      collapsed: true
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +34,8 @@ ronny@xxxx
 
 Mejores practicas: cada servidor tiene una funcion. Uno el del web, otro el del
 correo y así
-```
+
+```{bash, eval = FALSE}
 myhostname = cursolinux.com
 myorigin= cursolinux.com
 
@@ -35,7 +46,7 @@ Luego en /etc/apache2/sites-available/
 Nos traemos el archivo que acabamos de configurar en squirrelmail y lo 
 copiamos como mail.conf
 
-```
+```{bash, eval = FALSE}
 cp /etc/squirrelmail/apache.conf mail.conf
 ```
 
@@ -45,7 +56,7 @@ Lo modificamos
 Le damos un grupo mail a dovecot que es el protocolo. mail es un grupo que ya
 existe en linux.
 
-```
+```{bash, eval = FALSE}
 sudo usermod -G mail -a dovecot
 ```
 
@@ -57,13 +68,100 @@ Ya agregado el usuario, reiniciamos servicio
 
 # Servicio DNS
 
-Traduce IP a nombres.
+El Domain Name Space tiene como función traducir direcciones IP a nombres de
+dominios.
 
-Instalar bind9
+TODO:// Notas sobre teoría DNS
 
-Luego en `etc/bind/`
+Existen algunos paquetes útiles que nos permiten obtener información sobre 
+DNS y temas relacionados.
 
-Tenemos varios archivos como el named.conf.local
+```{bash, eval = FALSE}
+sudo apt install dnsutils
+```
+
+Con este paquete tenemos comandos como `ifconfig` que nos muestra información
+de la red tal como el ip, la máscara, el broadcast, el MAC address entre otros
+
+Otro paquete que nos ayudará es el **net-tools**
+
+```{bash, eval = FALSE}
+sudo apt install net-tools
+```
+
+Con este paquete podemos hacer la traducción entre una dirección ip y su dominio
+o viceversa.
+
+Por ejemplo, si queremos ver cuál es la dirección ip del dominio google.com, lo
+podemos hacer de la siguiente manera
+
+```{bash, eval = FALSE}
+sudo nslookup www.google.com
+```
+
+Nos deberá de mostrar una respuesta como la siguiente:
+
+```{bash, eval = FALSE}
+ronny@ronny:~$ sudo nslookup www.google.com
+[sudo] password for ronny: 
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	www.google.com
+Address: 172.217.2.196
+Name:	www.google.com
+Address: 2607:f8b0:4008:80d::2004
+
+ronny@ronny:~$ sudo nslookup www.brenesii.com
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+www.brenesii.com	canonical name = brenesii.com.
+Name:	brenesii.com
+Address: 184.168.131.241
+
+ronny@ronny:~$ sudo nslookup www.github.com
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+www.github.com	canonical name = github.com.
+Name:	github.com
+Address: 140.82.112.3
+```
+
+Cuando vemos que el formato de del `Address` cambia como en el caso de la 
+dirección de google, es porque está usando el ipv6.
+
+TODO:// Hacer notas de la parte teórica de las versiones ip y sus formatos.
+
+## Instalación y configuración
+
+Uno de los primeros pasos para configurar el servidor DNS es instalar el
+paquete **bind9**, el cual se utiliza actualmente por seguridad y soporte. Su 
+utilidad es para configurar nombres de dominios.
+
+```{bash, eval = FALSE}
+sudo apt install bind9
+```
+
+Si bien para todos los ejercicios acá seguidos, los diferentes servicios se
+están configurando en el mismo "servidor" (máquina virtual), lo correcto es que
+**no pongamos todos los huevos en el mismo canasto**. Si se nos daña el servidor
+todos nuestros servicios se caerán. Por ende es necesario tener un servidor para
+el servicio del correo, un servidor para el servicio DNS, otro para el servicio
+ftp y así sucesivamente.
+
+Ya con `bind9` instalado vamos a configurarlo. Para esto nos dirigimos a la 
+carpeta de configuración
+
+```{bash, eval = FALSE}
+cd /etc/bind/
+```
+
+En esta carpeta vamos a encontrar archivos como el named.conf.local
 
 Para que el DNS responda y dé un IP hay que configurarle la zona. Se hace en el
 archivo anteior.
@@ -74,6 +172,26 @@ poner db.ronny.com
 
 Para que DNS resuelva la IP hay que configurar el db.127 Hay que renombrarlo
 con la IP del servidor y se le pone los ultimos octetos. 
+
+# Tipos de registros
+
+```{bash, eval = FALSE}
+
+```
+
+# Configuración de zonas
+
+```{bash, eval = FALSE}
+
+```
+
+
+# Creación de dominios
+
+```{bash, eval = FALSE}
+
+```
+
 
 
 
