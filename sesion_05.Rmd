@@ -1,0 +1,204 @@
+---
+title: "Sesión 5"
+author: "Ronny Hernández Mora"
+date: "7/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tareas programadas en GNU/Linux
+
+Para buscar si tenemos el paquete instalado
+`sudo dpkg -l | grep cron`
+
+Si no lo tenemos lo instalamos
+
+`sudo apt install cron`
+
+Verificamos si el servicio está activo
+
+`sudo systemctl status cron.service`
+
+Formato de las tareas
+
+Hay 5 asteriscos + la ruta del archivo a ejecutar
+
+* * * * * /ruta/archivo.sh
+
+Para editar un trabajo programado
+
+`crontab -e`
+
+Para ver cuáles trabajos están programadas en el servidor:
+
+`crontab -l`
+
+Vamos a hacer respaldo de carpeta home
+
+`vim copia_seguridad.sh`
+
+Editamos el archivo:
+
+
+Luego cambiamos los permisos del archivo
+
+`sudo chmod 755 copia_seguridad.sh`
+
+Si lo corremos de nuevo, va a caerle sobre el archivo. No va a crear uno
+nuevo, por ende debemos de cambiar la programación al archivo .sh
+
+```{bash, eval = FALSE}
+!# /bin/bash/
+# script para realizar un respaldo de seguridad
+
+sudo tar -czvf /home-$(date +%d-%m-%y).tar.gz /home
+```
+
+Podemos ejecutar el script y ahora veremos un archivo comprimido con
+el respaldo y la fecha en el nombre.
+
+Si vamos a correrlo varias veces durante el día podemos incluir la 
+lógica de moverlo a una carpeta de backup
+
+```{bash, eval = FALSE}
+!# /bin/bash/
+
+# script para mover copia anterior a directorio de /home/backup
+mv /home*.tar.gz /home/backups
+
+# script para realizar un respaldo de seguridad
+sudo tar -czvf /home-$(date +%d-%m-%y).tar.gz /home
+```
+
+Ahora que tenemos el script, entonces vamos a programarlo
+
+Recordar que primero editamos un archivo crontab
+`crontab -e`
+
+```{bash, eval = FALSE}
+
+```
+
+# Servidor de correo electrónico
+
+Es un servicio de red que permite enviar y recibir mensajes.
+
+Por defecto utiliza puertos no cifrados:
+
+ - 110
+ - 25
+ - 143
+
+Mas lentos pero seguros
+
+ - 995
+ - 465
+ - 993
+ 
+Luego están los protolcos.
+
+ - SMTP se basa en texto Puertos 25, 465
+ - POP3 es a nivel de aplicación y lo utilizan los clientes para ver
+ todos los correos. Usualmente se usa cuando se le configura el 
+ correo al usuario y estos descargan los correos a la máquina. Puertos
+ 110, 143
+ - IMAP permite a ver los correos pero de manera remota (como gmail) y
+ no se descargan. Puertos 143, 993
+ 
+El más utilizado hoy en día es el IMAP.
+
+¿Cómo se envía un correo?
+
+Primer componente es el MUA. Es el Mail User Agent, es un cliente que 
+usa el correo para escribir o leer correos. El que usa el usuario para
+escribir sus correos
+
+MTA es un agente de transporte que recoge y envía los correos. Es el 
+software que se le configura al servidor. Esto es lo que vamos a trabajar
+en la sesión.
+
+MDA es el que se encarga de depositar el correo que envía el usuario
+a los buzones del destinatario.
+
+En linux existen varios servidores de correo:
+
+SMTP:
+ - sendmail casi no se usa por ser poco seguro
+ - Postfix más utilizado por seguridad y rendimiento
+ - qmail
+ - exim no es muy seguro pero viene por defecto en muchas distribuciones
+ 
+POP/IMAP:
+ - dovecot
+ 
+**Postfix**
+
+Agente de transporte de correo MTA de software libre.
+Fácil de configurar en `/etc/postfix/mail.cf`
+
+Configuración:
+
+Hay que tener apache2 instalado.
+
+
+Sitio de internet significa que configuramos el servidor para que él mismo
+lleve los msjs a su destino. Porque se puede dar la opcion de que pase por
+un segundo servidor.
+
+smarthost es para que vaya a un segundo servidor y lo lleve al destinatario
+
+satelite los msjs enviados se va a enviar por otro servidor. Similar al
+smarthost
+
+correo local es para que funcione a nivel LAN, o nivel de empresa.
+
+Elegimos sitio de internet.
+
+Luego nos va a pedir el nombre del correo que sería el nombre del dominio
+de la empresa. Como trabajamos con máquina virtual nos vamos a inventar uno.
+
+
+Luego de que tenemos el dominio lo que hacemos es trabajar en la 
+configuracion del servicio.
+
+Algunas distribuciuones ya vienen con exim que no es muy seguro por
+lo cual es bueno eliminar dicho paquete.
+
+Una vez configurando y el servicio habilitado tenemos que descargar un
+cliente que nos va a ayudar a gestionar como usuarios el correo.
+
+## Sesión práctica para 
+
+Para reconfigurar con las pantallas de opciones el postfix
+`sudo dpkg-reconfigure postfix`
+
+Parámetros se puede configurar manualmente.
+
+`systemctl status postfix.service`
+
+`postconf mail_version`
+
+Eliminamos exim
+
+`sudo apt purge exim4`
+
+Para que se elminen todos los archivos incluidos los de configuracion:
+`sudo apt --purge exim4`
+
+Además del paquete queremos eliminar todos los archivos de configuracion
+
+Nos vamos para la configuracion del correo
+`cd /etc/postfix/`
+
+Hacemos respaldo del archivo de configuracion:
+`cp main.cf main.cf.copia`
+
+Modificamos archivo de configuración:
+`sudo vim main.cf`
+
+
+
+
