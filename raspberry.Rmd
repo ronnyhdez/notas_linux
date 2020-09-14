@@ -41,3 +41,28 @@ y ahora tendremos acceso al raspberry.
 [blog](https://andresrcs.rbind.io/es/2018/11/21/shiny_rstudio_server/)
 [webinario](https://www.youtube.com/watch?v=BNTlEVYrT0I&list=PLZpKvQTlfyCI9b-Fr5Gmojf8uhuAXroG_&index=12)
 
+
+# Cambios en la terminal
+
+## Mostrar rama del proyecto git
+
+Lo que tenemos que hacer es abrir el archivo de configuracion de la terminal:
+
+```{bash, eval = FALSE}
+sudo vim ~/.bashrc 
+```
+
+Agregamos las siguientes lineas de texto:
+
+```{bash, eval = FALSE}
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+```
+
+Y por ultimo hacemos el source del archivo de configuración:
+
+```{bash, eval = FALSE}
+source ~/.bashrc 
+```

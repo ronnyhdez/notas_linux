@@ -1,0 +1,87 @@
+---
+title: "sesion_08"
+author: "Ronny Hernández Mora"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: true
+    number_sections: no
+    theme: spacelab
+    toc: yes
+    toc_float:
+      collapsed: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Para esta sesión agregamos 3 tarjetas de red a la maquina virtual.
+Se deja la misma configuración que teníamos en la primera.
+
+Necesitamos instalar net-tools
+
+ifconfig nos muestra las redes activas
+
+Lo primero que no muestra es la interfaz, la tarjeta de red que es enp0s3
+
+inet nos muestra el ip.
+
+Si nos aparece un 10.0..... es porque la configuración está
+con NAT en el virtualbox
+
+ether nos da la información física de la tarjeta de red
+
+
+
+
+```{bash, eval = FALSE}
+ifconfig
+```
+
+```{bash, eval = FALSE}
+
+```
+
+
+Si ya conozco una de las direcciones de red le puedo decir ifconfig que
+me de la informacion específica de esa red
+```{bash, eval = FALSE}
+
+```
+
+con ipaddr me muestra todas las tarjetas de red y me dice el estado en el 
+que estan.
+
+Podemos agarrar una de las que estan apagadas y con ifncofig la encendemos
+```{bash, eval = FALSE}
+
+```
+
+```{bash, eval = FALSE}
+
+```
+ Existen archivos en linux que son los log que registran todo lo que un
+ usuario hace en un sistema. pro ejemplo la cantidad de ocasiones que intenta
+ conectarse al servidor entre otros.
+ 
+ En presentacion hay algunos comunes pero hay mas
+ 
+```{bash, eval = FALSE}
+cd /var/log/
+ls
+```
+
+```{bash, eval = FALSE}
+
+```
+
+```{bash, eval = FALSE}
+
+```
+
+
+

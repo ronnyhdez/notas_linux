@@ -2,7 +2,17 @@
 title: "Sesión 4"
 author: "Ronny Hernández Mora"
 date: "7/11/2020"
-output: pdf_document
+output:
+  html_document:
+    code_folding: show
+    self_contained: true
+    number_sections: no
+    theme: spacelab
+    toc: yes
+    toc_float:
+      collapsed: true
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -21,29 +31,43 @@ Hay varios tipos de shell pero el más común es el **bash**
 ## Comandos básicos del shell
 
 **Para saber cuál shell estoy usando**
-```
+
+Cuando llamamos una variable, esta siempre va a tener el signo de dolar. 
+
+```{bash, eval = FALSE}
 echo $SHELL
 ```
 
 **Obtener la versión del shell**
-```
+
+```{bash, eval = FALSE}
 /bin/bash --version
 ```
 
 **Todos lo archivos de configuración están en /etc/**
-```
+
+Para revisar los shell que tenemos en nuestro sistema operativo, los podemos
+ver con el siguiente comando. Algunas terminales se usan para programar, otras
+para escribir comandos.
+
+```{bash, eval = FALSE}
 cat /etc/shells
 ```
 
 ## Creación de scripts
 
 **Crear/editar un script de shell**
-```
+
+```{bash, eval = FALSE}
 sudo vim hola_mundo.sh
 ```
 
 **Hola mundo de un .sh**
-```
+
+Los `#` nos indican que la linea es un comentario. Por convención, la primera
+linea la dejamos como  bin/bash para indicar que es un script de bash.
+
+```{bash, eval = FALSE}
 #! /bin/bash
 
 mensaje="Hola Mundo"
@@ -52,12 +76,15 @@ echo $mensaje
 
 **Luego le cambiamos permisos al archivo**
 
-De esta manera podremos ejecutar el archivo.
-```
+De esta manera podremos ejecutar el archivo. Recordar que si no realizamos este
+paso, puede ser que el script no se ejecute
+
+```{bash, eval = FALSE}
 sudo chmod 755 hola_mundo.sh
 ```
 
-Ahora lo podemos correr
+Ahora lo podemos correr. Usamos el comando `sh` para correr el script que
+hemos creado.
 ```
 sh hola_mundo.sh
 ```
@@ -105,12 +132,16 @@ esac
  - `>` Redirecciona salida a un archivo
  - `>>` Redirecciona salida agregando a un archivo
  - `<` Redirecciona salida a un archivo sobreescribiendolo.
+ 
+Vamos a probar el redireccionamiento con el archivo `/etc/passwd`. Lo
+podemos revisar primero con el comando `more`
 
 ```
 more /etc/passwd
 ```
 
-Si me quiero llevar lo de ese archivo a otro sitio
+Si me quiero llevar lo de ese archivo a otro sitio, usamos los comandos
+de redireccionamiento:
 
 ```
 cat /etc/passwd > nuevo_archivo.txt

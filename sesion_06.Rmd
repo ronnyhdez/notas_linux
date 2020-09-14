@@ -161,16 +161,39 @@ carpeta de configuración
 cd /etc/bind/
 ```
 
-En esta carpeta vamos a encontrar archivos como el named.conf.local
+Si revisamos los archivos que se encuentran allí dentro, son los siguientes:
 
-Para que el DNS responda y dé un IP hay que configurarle la zona. Se hace en el
-archivo anteior.
+```{bash, eval = FALSE}
+ronny@ronny:/etc/bind$ ls
+bind.keys  db.127  db.empty  db.root     named.conf.default-zones  named.conf.options  zones.rfc1918
+db.0       db.255  db.local  named.conf  named.conf.local          rndc.key
 
-EL otro archivo es db.local. Este tenemos que renombrarlo y ponerle el nombre
-de nuestro dominio. Si tenemos ronny.com lo vamos a copiar acá y le vamos a
-poner db.ronny.com
+```
 
-Para que DNS resuelva la IP hay que configurar el db.127 Hay que renombrarlo
+El primer archivo que vamos a configurar es el **named.conf.local**. En este
+configuramos la **zona**. Cuando corremos un comando como `iplookup` que nos
+muestra un DNS asociado a una IP, tiene que existir un archivo que contiene
+esta información con la zona. Justo este es el paso que estaremos configurando.
+
+El otro archivo a configurar es el **db.local**. Este archivo tenemos que
+renombrarlo y ponerle el nombre de nuestro dominio. Si tenemos www.ronny.com lo
+vamos a copiar acá y le vamos a poner db.ronny.com
+
+Un tercer archivo a configurar con el fin de que el DNS resuelva la IP es el 
+**db.127**. Lo primero que hacemos es una copiar del archivo y le cambiamos el
+nombre pero ahora será la inversa. Vamos a ponerle la IP del servidor y le 
+colocaremos los 3 últimos octetos. Por ejemplo si mi dirección es 192.168.0.17
+vamos a dejar por fuera el 17 y vamos a regresar del cero hacia atrás, por lo
+cual tendríamos el archivo renombrado a **db.0.168.192**.
+
+Renombre del archivo db.127 en resumen:
+
+ - Mi dirección del servidor es 192.168.0.17
+ - Tomamos tres octetos: 192.168.0 ~~.17~~
+ - Renombramos iniciando del cero: db.0.168.192
+
+
+hay que configurar el db.127 Hay que renombrarlo
 con la IP del servidor y se le pone los ultimos octetos. 
 
 # Tipos de registros
