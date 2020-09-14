@@ -1,0 +1,153 @@
+---
+title: "Sesión 7"
+author: "Ronny Hernández Mora"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: true
+    number_sections: no
+    theme: spacelab
+    toc: yes
+    toc_float:
+      collapsed: true
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Servidor Web Apache
+
+Es de los servidores más utilizados a nivel mundial. Si bien hay otros Apache
+es de los más usados inclusive por empresas grandes.
+
+Para revisar la popularidad de servidores web utilizados podemos mirar
+[esta página](https://news.netcraft.com/archives/category/web-server-survey/)
+
+Hoy en día junto con nginx es de los más utilizados.
+
+## Protocolo
+
+El protocolo HTTP está basado en mensajes. Los más comunes son:
+
+ - **GET**: Cuando abrimos un navegador, pedimos una página web.
+ - **POST**: Si en una página web llenamos información, la enviamos. Usamos POST
+ 
+En cada transacción con un servidor HTTP, tenemos un código numérico que 
+informa sobre el resultado de la operación:
+
+ - 1XX: Informativa. Petición recibida y en proceso
+ - 2XX: Petición procesada correctamente
+ - 3XX: Redirección
+ - 4XX: Error de cliente
+ - 5XX: Error en servidor
+
+## Apache configuración
+
+Lo primero es instalar Apache. En todas las distribuciones Linux Apache ya
+viene por defecto
+
+Para revisar los procesos que están corriendo en Apache:
+
+```{bash, eval = FALSE}
+sudo lsof -i:80
+```
+
+Nos mostrará la siguiente información (cuando está recién instalado sin configurar)
+
+```{bash, eval = FALSE}
+ronny-hernandez@debian-server:~$ sudo lsof -i:80
+COMMAND PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+apache2 526     root    3u  IPv6  14768      0t0  TCP *:http (LISTEN)
+apache2 552 www-data    3u  IPv6  14768      0t0  TCP *:http (LISTEN)
+apache2 553 www-data    3u  IPv6  14768      0t0  TCP *:http (LISTEN)
+apache2 554 www-data    3u  IPv6  14768      0t0  TCP *:http (LISTEN)
+apache2 555 www-data    3u  IPv6  14768      0t0  TCP *:http (LISTEN)
+apache2 557 www-data    3u  IPv6  14768      0t0  TCP *:http (LISTEN)
+```
+
+EL archivo principal de configuración es **apache2.conf**
+
+TODO:// Anotar por puntos archivos de configuración y su definición.
+
+## Instalación y configuración global
+
+Tal como mencionamos anteriormente, el archivo **apache2.conf** es el principal
+de configuración. Este archivo está dividido en 3 secciones:
+
+ - Configuración global
+ - Configuración general del servidor
+ - Configuración de los servidores virtuales
+ 
+En slide, la segunda parte de comandos tiene por título configuración global
+cuando debería de ser configuración general que está también ligada a la
+de servidor virtual.
+
+## Para la configuración de servidores virtuales:
+
+
+## Instalación 
+
+Instalamos php
+
+```{bash, eval = FALSE}
+sudo apt install php
+```
+
+Luego instalamos módulos de php para trabajar con mysql
+
+```{bash, eval = FALSE}
+sudo apt install libapache2-mod-php php-mysql
+```
+
+Para revisar la versión de apache
+
+```{bash, eval = FALSE}
+apache2 -v
+
+# Detenemos el servicio de apache
+sudo systemctl stop apache2.service
+```
+
+Vamos a editar apache2.conf
+
+```{bash, eval = FALSE}
+sudo vim apache2.conf
+```
+
+**Para buscar con vim en modo normal escribimos /**
+
+Luego modificamos el archivo de puertos
+
+# Servicio de base de datos
+
+```{bash, eval = FALSE}
+
+```
+
+# Instalación de un gestor de base de datos
+
+```{bash, eval = FALSE}
+
+```
+
+# Servicio web, VirtualHost
+
+```{bash, eval = FALSE}
+
+```
+
+# Instalación de un servidor Web LAMP
+
+```{bash, eval = FALSE}
+
+```
+
+# Lab: Instalar servicio web
+
+```{bash, eval = FALSE}
+
+```
